@@ -94,12 +94,20 @@
                 separator=" and "
             />
         </xpath>
-        <xpath expr="//span[@t-field='line.price_subtotal']" position="attributes">
+        <xpath expr="//span[@t-field='line.price_total']" position="attributes">
             <attribute
                 name="t-if"
                 add="(not current_section or current_section.show_line_amount)"
                 separator=" and "
             />
+        </xpath>
+        <!-- The tax excluded amount is rendered by a t-else, which cannot be
+             combined with t-if: turn it into an explicit t-if. -->
+        <xpath expr="//span[@t-field='line.price_subtotal']" position="attributes">
+            <attribute name="t-else" />
+            <attribute
+                name="t-if"
+            >sale_order.company_price_include != 'tax_included' and (not current_section or current_section.show_line_amount)</attribute>
         </xpath>
         <xpath
             expr="//t[@t-foreach='lines_to_report']//span[contains(@t-out, 'line.tax_id')]"

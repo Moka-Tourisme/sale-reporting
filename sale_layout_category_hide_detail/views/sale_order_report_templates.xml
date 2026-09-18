@@ -82,12 +82,23 @@
             />
         </xpath>
 
-        <xpath expr="//td[@name='td_priceunit']/span" position="attributes">
+        <xpath expr="//td[@name='td_priceunit']/span[@t-out]" position="attributes">
             <attribute
                 name="t-if"
                 add="(not current_section or current_section.show_line_amount)"
                 separator=" and "
             />
+        </xpath>
+        <!-- The second span uses t-else, which cannot be combined with t-if:
+             turn it into an explicit t-if before adding our condition. -->
+        <xpath
+            expr="//td[@name='td_priceunit']/span[@t-field='line.price_unit']"
+            position="attributes"
+        >
+            <attribute name="t-else" />
+            <attribute
+                name="t-if"
+            >line.discount &gt;= 0 and (not current_section or current_section.show_line_amount)</attribute>
         </xpath>
         <xpath expr="//td[@name='td_taxes']/span" position="attributes">
             <attribute
@@ -96,12 +107,25 @@
                 separator=" and "
             />
         </xpath>
-        <xpath expr="//td[@name='td_subtotal']/span" position="attributes">
+        <xpath
+            expr="//td[@name='td_subtotal']/span[@t-field='line.price_total']"
+            position="attributes"
+        >
             <attribute
                 name="t-if"
                 add="(not current_section or current_section.show_line_amount)"
                 separator=" and "
             />
+        </xpath>
+        <!-- Same as above: the tax excluded amount is rendered by a t-else. -->
+        <xpath
+            expr="//td[@name='td_subtotal']/span[@t-field='line.price_subtotal']"
+            position="attributes"
+        >
+            <attribute name="t-else" />
+            <attribute
+                name="t-if"
+            >doc.company_price_include != 'tax_included' and (not current_section or current_section.show_line_amount)</attribute>
         </xpath>
         <xpath expr="//td[@t-if='display_discount']/span" position="attributes">
             <attribute
